@@ -1,0 +1,49 @@
+═══════════════════════════════════════════════════════════════
+  快速部署命令 - 复制粘贴即可使用
+═══════════════════════════════════════════════════════════════
+
+步骤 1: 在 GitHub 创建仓库
+───────────────────────────────────────────────────────────────
+访问: https://github.com/new
+仓库名称: web3-wallet
+不要勾选任何初始化选项
+点击 "Create repository"
+
+
+步骤 2: 推送代码到 GitHub
+───────────────────────────────────────────────────────────────
+复制下面的命令，替换 YOUR_USERNAME 为你的 GitHub 用户名：
+
+cd web3-wallet
+git remote add origin https://github.com/YOUR_USERNAME/web3-wallet.git
+git branch -M main
+git push -u origin main
+
+注意: 推送时需要输入 GitHub Personal Access Token
+创建 Token: https://github.com/settings/tokens
+
+
+步骤 3: 在 Vercel 部署
+───────────────────────────────────────────────────────────────
+访问: https://vercel.com/new
+使用 GitHub 账号登录
+导入你的 web3-wallet 仓库
+点击 "Deploy"
+等待 2-3 分钟
+
+
+完成！
+───────────────────────────────────────────────────────────────
+部署成功后，你会得到一个 URL:
+https://web3-wallet-xxx.vercel.app
+
+可以分享给朋友，或在手机上安装为 App！
+
+
+需要详细说明？
+───────────────────────────────────────────────────────────────
+查看 PUSH_INSTRUCTIONS.md - 详细的推送步骤
+查看 START_HERE.md - 完整的部署指南
+查看 DEPLOYMENT_STEPS.md - 分步教程
+
+═══════════════════════════════════════════════════════════════

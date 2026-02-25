@@ -2,9 +2,13 @@ import { useBalance } from 'wagmi';
 import { useAccount } from 'wagmi';
 import { supportedChains, chainConfig } from '../chains/config';
 import { formatUnits } from 'viem';
+import { useState, useEffect } from 'react';
+import { getSolanaBalance } from '../chains/solana';
+import { getBitcoinBalance } from '../chains/bitcoin';
+import { getTronBalance } from '../chains/tron';
 
 export interface ChainBalance {
-  chainId: number;
+  chainId: number | string;
   chainName: string;
   symbol: string;
   balance: string;
@@ -22,6 +26,12 @@ export interface MultiChainBalanceResult {
 
 export function useMultiChainBalance(): MultiChainBalanceResult {
   const { address } = useAccount();
+  
+  // State for non-EVM chains
+  const [solanaBalance, setSolanaBalance] = useState<string>('0');
+  const [bitcoinBalance, setBitcoinBalance] = useState<string>('0');
+  const [tronBalance, setTronBalance] = useState<string>('0');
+  const [nonEvmLoading, setNonEvmLoading] = useState(false);
 
   // Fetch balance for each supported chain
   const balanceQueries = supportedChains.map((chain) => {
@@ -32,8 +42,45 @@ export function useMultiChainBalance(): MultiChainBalanceResult {
     });
   });
 
-  // Process balances
-  const balances: ChainBalance[] = supportedChains.map((chain, index) => {
+  // Fetch non-EVM chain balances
+  useEffect(() => {
+    const fetchNonEvmBalances = async () => {
+      if (!address) return;
+      
+      setNonEvmLoading(true);
+      try {
+        // Note: These addresses would need to be provided separately
+        // For now, we'll use placeholder logic
+        const solAddress = localStorage.getItem('solana_address');
+        const btcAddress = localStorage.getItem('bitcoin_address');
+        const tronAddress = localStorage.getItem('tron_address');
+
+        if (solAddress) {
+          const solBal = await getSolanaBalance(solAddress);
+          setSolanaBalance(solBal.toFixed(6));
+        }
+
+        if (btcAddress) {
+          const btcBal = await getBitcoinBalance(btcAddress);
+          setBitcoinBalance(btcBal.toFixed(8));
+        }
+
+        if (tronAddress) {
+          const trxBal = await getTronBalance(tronAddress);
+          setTronBalance(trxBal.toFixed(6));
+        }
+      } catch (error) {
+        console.error('Error fetching non-EVM balances:', error);
+      } finally {
+        setNonEvmLoading(false);
+      }
+    };
+
+    fetchNonEvmBalances();
+  }, [address]);
+
+  // Process EVM balances
+  const evmBalances: ChainBalance[] = supportedChains.map((chain, index) => {
     const query = balanceQueries[index];
     const config = chainConfig[chain.id];
 
@@ -50,8 +97,41 @@ export function useMultiChainBalance(): MultiChainBalanceResult {
     };
   });
 
+  // Add non-EVM balances
+  const nonEvmBalances: ChainBalance[] = [
+    {
+      chainId: 'solana',
+      chainName: 'Solana',
+      symbol: 'SOL',
+      balance: solanaBalance,
+      formattedBalance: solanaBalance,
+      isLoading: nonEvmLoading,
+      error: null,
+    },
+    {
+      chainId: 'bitcoin',
+      chainName: 'Bitcoin',
+      symbol: 'BTC',
+      balance: bitcoinBalance,
+      formattedBalance: bitcoinBalance,
+      isLoading: nonEvmLoading,
+      error: null,
+    },
+    {
+      chainId: 'tron',
+      chainName: 'Tron',
+      symbol: 'TRX',
+      balance: tronBalance,
+      formattedBalance: tronBalance,
+      isLoading: nonEvmLoading,
+      error: null,
+    },
+  ];
+
+  const balances = [...evmBalances, ...nonEvmBalances];
+
   // Calculate total balance in ETH (simplified - treating all ETH-based chains equally)
-  const totalBalanceInETH = balances
+  const totalBalanceInETH = evmBalances
     .reduce((total, balance) => {
       // Only sum ETH-based chains (Ethereum, Optimism, Arbitrum, Base)
       if (

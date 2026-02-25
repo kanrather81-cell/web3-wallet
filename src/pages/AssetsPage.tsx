@@ -4,6 +4,9 @@ import { useMultiChainBalance } from '../lib/hooks';
 import { ConnectWallet } from '../components';
 import { NFTGallery } from '../components/NFTGallery';
 import { TransactionHistory } from '../components/TransactionHistory';
+import { ChainConnectors } from '../components/ChainConnectors';
+import { ChainAssets } from '../components/ChainAssets';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { ChainIcon } from '../components/ChainIcon';
@@ -140,6 +143,16 @@ export function AssetsPage() {
             <AssetsChart balances={balances} />
           </CardContent>
         </Card>
+
+        {/* Multi-Chain Connectors */}
+        <ErrorBoundary>
+          <ChainConnectors />
+        </ErrorBoundary>
+
+        {/* Multi-Chain Assets */}
+        <ErrorBoundary>
+          <ChainAssets />
+        </ErrorBoundary>
 
         {/* Tabs for Tokens, NFTs, and History */}
         <Tabs defaultValue="tokens" className="w-full">

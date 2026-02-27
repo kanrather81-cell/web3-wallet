@@ -292,8 +292,8 @@ export function SendPage() {
               chain={selectedChain}
               onGasChange={handleGasChange}
               context={{
-                provider: (window as any).ethereum,
-                connection: (window as any).solana?.connection,
+                provider: require('../lib/utils/safeWindow').getSafeWindowProp('ethereum'),
+                connection: require('../lib/utils/safeWindow').getSafeWindowProp('solana')?.connection,
               }}
               defaultSpeed="standard"
             />
@@ -350,7 +350,7 @@ export function SendPage() {
           <button
             onClick={handleSendClick}
             disabled={loading || !isConnected || !recipient || !amount}
-            className="w-full bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-md"
+            className={`btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-all`}
           >
             {loading ? '发送中...' : '发送'}
           </button>

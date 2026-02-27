@@ -24,7 +24,7 @@ export function AssetsPage() {
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 pb-24">
-        <div className="max-w-md w-full">
+        <div className="max-w-md w-full app-container">
           <ConnectWallet />
         </div>
       </div>
@@ -34,7 +34,7 @@ export function AssetsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 p-4 pb-24">
-        <div className="max-w-4xl mx-auto pt-8">
+        <div className="max-w-4xl mx-auto pt-8 app-container">
           <ConnectWallet />
           <AssetsLoadingSkeleton />
         </div>
@@ -46,7 +46,7 @@ export function AssetsPage() {
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* 顶部渐变区域 */}
       <div className="bg-gradient-tp pt-12 pb-8 px-6 rounded-b-[32px] mb-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto app-container">
           <ConnectWallet />
 
           {/* Header */}
@@ -71,10 +71,10 @@ export function AssetsPage() {
           <div className="grid grid-cols-4 gap-3 mt-6">
             <button
               onClick={() => navigate('/send')}
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center gap-2 transition-all"
+              className="btn-primary rounded-xl p-4 flex flex-col items-center gap-2 transition-all"
             >
-              <ArrowLeftRight className="w-6 h-6 text-white" />
-              <span className="text-white text-sm font-medium">发送</span>
+              <ArrowLeftRight className="w-6 h-6" />
+              <span className="text-sm font-medium">发送</span>
             </button>
             <button
               onClick={() => navigate('/history')}

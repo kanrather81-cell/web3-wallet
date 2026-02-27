@@ -68,18 +68,19 @@ export function TokenDetailPage() {
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* Header */}
       <div className="bg-gradient-tp pt-12 pb-8 px-6 rounded-b-[32px] mb-6">
-        <div className="flex items-center justify-center mb-6">
+        <div className="max-w-4xl mx-auto app-container">
+          <div className="flex items-center justify-center mb-6">
           <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
             <span className="text-white font-bold text-3xl">
               {tokenInfo.symbol.charAt(0)}
             </span>
           </div>
-        </div>
+          </div>
 
-        <h1 className="text-3xl font-bold text-white text-center mb-2">
-          {tokenInfo.chainName}
-        </h1>
-        <p className="text-white/80 text-center">{tokenInfo.symbol}</p>
+          <h1 className="text-3xl font-bold text-white text-center mb-2">
+            {tokenInfo.chainName}
+          </h1>
+          <p className="text-white/80 text-center">{tokenInfo.symbol}</p>
 
         {/* Balance Display */}
         <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mt-6">
@@ -96,10 +97,10 @@ export function TokenDetailPage() {
         <div className="flex gap-4 mt-6">
           <button
             onClick={handleSend}
-            className="flex-1 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl p-4 flex items-center justify-center gap-2 transition-all"
+            className="flex-1 btn-primary flex items-center justify-center gap-2 p-4 rounded-xl"
           >
-            <ArrowUpRight className="w-5 h-5 text-white" />
-            <span className="text-white font-semibold">发送</span>
+            <ArrowUpRight className="w-5 h-5" />
+            <span className="font-semibold">发送</span>
           </button>
           <button
             onClick={handleReceive}

@@ -25,7 +25,9 @@ export function MainLayout({
         <TopNav title={topNavTitle} showBack={showBack} showSettings={showSettings} />
       )}
       <main className={showBottomNav ? 'pb-20' : ''}>
-        {children}
+        <div className="max-w-4xl mx-auto app-container">
+          {children}
+        </div>
       </main>
       {showBottomNav && <BottomNav />}
     </div>

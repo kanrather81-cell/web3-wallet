@@ -52,3 +52,79 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
+
+/* Global app container for consistent padding/centering */
+.app-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Use defined color variables for backgrounds and text */
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Card defaults for consistent appearance */
+.card,
+.card-content,
+.card-body {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid hsl(var(--border) / 0.12);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.18);
+}
+
+/* Buttons: accessible contrast and smooth interactions */
+button,
+[role='button'] {
+  font-family: inherit;
+  border-radius: 0.75rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+button:active,
+[role='button']:active {
+  transform: translateY(1px);
+}
+
+/* Primary button helper */
+.btn-primary {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 1px solid hsl(var(--primary) / 0.9);
+  box-shadow: 0 8px 20px rgba(2,6,23,0.18);
+}
+
+/* Focus states for keyboard accessibility */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  box-shadow: 0 0 0 4px hsl(var(--ring) / 0.14), 0 2px 6px rgba(2,6,23,0.18);
+  border-radius: 0.5rem;
+}
+
+/* Improve readability on small screens */
+@media (max-width: 640px) {
+  .app-container {
+    padding: 0.75rem;
+  }
+  .card,
+  .card-content {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+  }
+}
+
+/* Utility: subtle muted text */
+.muted {
+  color: hsl(var(--muted-foreground));
+}

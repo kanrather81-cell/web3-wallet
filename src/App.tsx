@@ -5,7 +5,6 @@ import { Providers } from './providers';
 import { MainLayout } from './components/MainLayout';
 import { BottomNavFive } from './components/layout/BottomNavFive';
 // homepage seed; replaced with real assets view
-import { AssetsPage } from './pages/AssetsPage';
 import { DiscoverTP } from './pages/DiscoverTP';
 import { ProfileTP } from './pages/ProfileTP';
 

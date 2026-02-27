@@ -24,28 +24,54 @@ export const TronProvider = ({ children }: { children: ReactNode }) => {
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    // 检查TronLink是否安装
+    // 检查TronLink是否安装（安全读取）
     const checkTronLink = () => {
-      const installed = !!(window as any).tronLink && !!(window as any).tronWeb;
-      setIsInstalled(installed);
+      try {
+         
+        const { getSafeWindowProp } = require('../lib/utils/safeWindow');
+        const installed = !!getSafeWindowProp('tronLink') && !!getSafeWindowProp('tronWeb');
+        setIsInstalled(installed);
 
-      if (installed) {
-        setTronLink((window as any).tronLink);
-        setTronWeb((window as any).tronWeb);
+        if (installed) {
+          setTronLink(getSafeWindowProp('tronLink'));
+          setTronWeb(getSafeWindowProp('tronWeb'));
+        }
+
+        setIsInitialized(true);
+      } catch (e) {
+         
+        console.warn('checkTronLink failed', e);
+        setIsInitialized(true);
       }
-
-      setIsInitialized(true);
     };
 
-    // 监听TronLink初始化事件
-    if ((window as any).tronLink) {
-      checkTronLink();
-    } else {
-      window.addEventListener('tronLink#initialized', checkTronLink);
+    try {
+      const safeTronLink = (function() {
+        try {
+           
+          const { getSafeWindowProp } = require('../lib/utils/safeWindow');
+          return getSafeWindowProp('tronLink');
+        } catch (e) {
+          return undefined;
+        }
+      })();
+
+      if (safeTronLink) {
+        checkTronLink();
+      } else {
+        window.addEventListener('tronLink#initialized', checkTronLink);
+      }
+    } catch (e) {
+       
+      console.warn('TronProvider initialization failed:', e);
+      // 保证组件不会一直处于未初始化状态
+      setIsInitialized(true);
     }
 
     return () => {
-      window.removeEventListener('tronLink#initialized', checkTronLink);
+      try {
+        window.removeEventListener('tronLink#initialized', checkTronLink);
+      } catch {}
     };
   }, []);
 

@@ -1,11 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    nodePolyfills({
+      // 启用所有需要的 Node.js 模块 polyfills
+      include: ['assert', 'buffer', 'crypto', 'stream', 'path', 'fs', 'os', 'url', 'util'],
+      // 全局注入
+      globals: {
+        Buffer: true,
+        global: true,
+        process: true,
+      },
+      protocolImports: true,
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['vite.svg'],
@@ -35,6 +47,7 @@ export default defineConfig({
         ]
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
         runtimeCaching: [
           {
@@ -83,6 +96,21 @@ export default defineConfig({
       }
     })
   ],
+  // 添加代理解决 Tron API CORS 问题
+  server: {
+    proxy: {
+      '/trongrid': {
+        target: 'https://api.trongrid.io',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/trongrid/, ''),
+      },
+      '/trongrid-v1': {
+        target: 'https://api.trongrid.io',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/trongrid-v1/, '/v1'),
+      },
+    },
+  },
   build: {
     rollupOptions: {
       output: {

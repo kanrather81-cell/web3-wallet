@@ -12,14 +12,6 @@ export interface TronWalletState {
   disconnect: () => void;
 }
 
-// 声明TronLink全局对象
-declare global {
-  interface Window {
-    tronLink?: any;
-    tronWeb?: any;
-  }
-}
-
 // Tron钱包连接Hook
 export function useTron(): TronWalletState {
   const [address, setAddress] = useState<string | null>(null);
@@ -63,8 +55,8 @@ export function useTron(): TronWalletState {
 
     fetchBalance();
 
-    // 每30秒刷新一次余额
-    const interval = setInterval(fetchBalance, 30000);
+    // 每60秒刷新一次余额（减少API调用频率）
+    const interval = setInterval(fetchBalance, 60000);
     return () => clearInterval(interval);
   }, [address]);
 

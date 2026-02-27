@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { NetworkManager, type NetworkConfig } from '../services/networkManager';
 import { BiometricAuthService } from '../services/biometricAuth';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { AutoLockSettings } from '../components/AutoLockSettings';
 import { Input } from '../components/ui/input';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import {
@@ -23,6 +23,7 @@ import {
   ExternalLink,
   Edit,
   Fingerprint,
+  Wallet,
 } from 'lucide-react';
 
 export function SettingsPage() {
@@ -202,261 +203,262 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
-      <div className="max-w-4xl mx-auto pt-8 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-3">
-              <Settings className="w-8 h-8 text-indigo-400" />
-              <h1 className="text-3xl font-bold text-white">{t('settings.title')}</h1>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50 pb-24">
+      {/* Header - TP Style */}
+      <div className="bg-gradient-tp text-white px-6 pt-12 pb-6 rounded-b-[32px] shadow-lg">
+        <div className="flex items-center gap-3">
+          <Settings className="w-7 h-7" />
+          <h1 className="text-2xl font-bold">{t('settings.title')}</h1>
+        </div>
+      </div>
+
+      <div className="px-4 mt-6 space-y-4">
+        {/* Language Settings Section */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('settings.language')}</h2>
+          <p className="text-sm text-gray-600 mb-4">{t('settings.selectLanguage')}</p>
+          <LanguageSwitcher />
         </div>
 
-        {/* Language Settings Section */}
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white">{t('settings.language')}</CardTitle>
-            <CardDescription>{t('settings.selectLanguage')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LanguageSwitcher />
-          </CardContent>
-        </Card>
+        {/* Wallet Management Section */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-2 mb-1">
+            <Wallet className="w-5 h-5 text-primary-600" />
+            <h2 className="text-lg font-semibold text-gray-900">钱包管理</h2>
+          </div>
+          <p className="text-sm text-gray-600 mb-4">管理您的多个钱包</p>
+          <button
+            onClick={() => navigate('/wallets')}
+            className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Wallet className="w-5 h-5 text-primary-600" />
+              <div className="text-left">
+                <p className="text-gray-900 font-medium">查看所有钱包</p>
+                <p className="text-sm text-gray-600">创建、导入、切换和管理钱包</p>
+              </div>
+            </div>
+            <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
+          </button>
+        </div>
 
         {/* Biometric Authentication Section */}
         {biometricAvailable && (
-          <Card className="bg-gray-800/50 border-gray-700">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Fingerprint className="w-5 h-5 text-indigo-400" />
-                <CardTitle className="text-white">{t('security.biometric.title')}</CardTitle>
-              </div>
-              <CardDescription>{t('security.biometric.description')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
-                <div>
-                  <p className="text-white font-medium mb-1">
-                    {biometricEnabled
-                      ? t('security.biometric.disable')
-                      : t('security.biometric.enable')}
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    {t('security.biometric.type')}: {BiometricAuthService.getBiometricType()}
-                  </p>
-                </div>
-                <button
-                  onClick={handleToggleBiometric}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    biometricEnabled ? 'bg-indigo-600' : 'bg-gray-700'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      biometricEnabled ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Network Management Section */}
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <div className="flex items-center justify-between">
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div className="flex items-center gap-2 mb-1">
+              <Fingerprint className="w-5 h-5 text-primary-600" />
+              <h2 className="text-lg font-semibold text-gray-900">{t('security.biometric.title')}</h2>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">{t('security.biometric.description')}</p>
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
               <div>
-                <div className="flex items-center gap-2">
-                  <Network className="w-5 h-5 text-indigo-400" />
-                  <CardTitle className="text-white">{t('settings.networkManagement')}</CardTitle>
-                </div>
-                <CardDescription className="mt-2">
-                  {t('settings.networkManagementDesc')}
-                </CardDescription>
+                <p className="text-gray-900 font-medium mb-1">
+                  {biometricEnabled
+                    ? t('security.biometric.disable')
+                    : t('security.biometric.enable')}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {t('security.biometric.type')}: {BiometricAuthService.getBiometricType()}
+                </p>
               </div>
               <button
-                onClick={() => setIsAddDialogOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                {t('settings.addNetwork')}
-              </button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {networks.map((network) => (
-              <Card
-                key={network.id}
-                className={`bg-gray-900/50 border-gray-700 hover:bg-gray-900/70 transition-colors ${
-                  network.isDefault ? 'border-indigo-500' : ''
+                onClick={handleToggleBiometric}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  biometricEnabled ? 'bg-primary-600' : 'bg-gray-300'
                 }`}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between gap-4">
-                    {/* Left: Network Info */}
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="text-3xl">{network.icon || '🌐'}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-white font-medium">{network.name}</h3>
-                          <span
-                            className={`text-xs px-2 py-0.5 rounded ${getChainColor(
-                              network.chainId
-                            )} text-white font-medium`}
-                          >
-                            {network.symbol}
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    biometricEnabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Auto Lock Settings Section */}
+        <AutoLockSettings />
+
+        {/* Network Management Section */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Network className="w-5 h-5 text-primary-600" />
+                <h2 className="text-lg font-semibold text-gray-900">{t('settings.networkManagement')}</h2>
+              </div>
+              <p className="text-sm text-gray-600">{t('settings.networkManagementDesc')}</p>
+            </div>
+            <button
+              onClick={() => setIsAddDialogOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors shadow-md"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('settings.addNetwork')}</span>
+            </button>
+          </div>
+          
+          <div className="space-y-3">
+            {networks.map((network) => (
+              <div
+                key={network.id}
+                className={`bg-gray-50 rounded-xl p-4 border ${
+                  network.isDefault ? 'border-primary-300 bg-primary-50' : 'border-gray-100'
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  {/* Left: Network Info */}
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="text-2xl mt-0.5">{network.icon || '🌐'}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h3 className="text-gray-900 font-semibold">{network.name}</h3>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full ${getChainColor(
+                            network.chainId
+                          )} text-white font-medium`}
+                        >
+                          {network.symbol}
+                        </span>
+                        {network.isDefault && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-primary-600 text-white font-medium flex items-center gap-1">
+                            <Check className="w-3 h-3" />
+                            {t('settings.default')}
                           </span>
-                          {network.isDefault && (
-                            <span className="text-xs px-2 py-0.5 rounded bg-indigo-500 text-white font-medium flex items-center gap-1">
-                              <Check className="w-3 h-3" />
-                              {t('settings.default')}
-                            </span>
-                          )}
-                          {network.isCustom && (
-                            <span className="text-xs px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-medium">
-                              {t('settings.custom')}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-400">
-                          <span>Chain ID: {network.chainId}</span>
-                          <span>•</span>
-                          <span className="truncate">{network.rpcUrl}</span>
-                        </div>
+                        )}
+                        {network.isCustom && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 font-medium">
+                            {t('settings.custom')}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
+                        <span>Chain ID: {network.chainId}</span>
+                        <span>•</span>
+                        <span className="truncate">{network.rpcUrl}</span>
+                      </div>
+                      
+                      {/* Actions Row */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {!network.isDefault && (
+                          <button
+                            onClick={() => handleSetDefault(network.id)}
+                            className="px-3 py-1.5 text-xs bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors font-medium"
+                          >
+                            {t('settings.setAsDefault')}
+                          </button>
+                        )}
+                        {network.isCustom && (
+                          <>
+                            <button
+                              onClick={() => handleEdit(network)}
+                              className="p-1.5 hover:bg-primary-100 rounded-lg transition-colors"
+                              title={t('common.edit')}
+                            >
+                              <Edit className="w-4 h-4 text-primary-600" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(network.id)}
+                              className="p-1.5 hover:bg-red-100 rounded-lg transition-colors"
+                              title={t('common.delete')}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-600" />
+                            </button>
+                          </>
+                        )}
+                        <a
+                          href={network.explorerUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors"
+                          title={t('settings.browser')}
+                        >
+                          <ExternalLink className="w-4 h-4 text-gray-600" />
+                        </a>
                       </div>
                     </div>
-
-                    {/* Right: Actions */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {!network.isDefault && (
-                        <button
-                          onClick={() => handleSetDefault(network.id)}
-                          className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-gray-300 rounded transition-colors"
-                          title={t('settings.setAsDefault')}
-                        >
-                          {t('settings.setAsDefault')}
-                        </button>
-                      )}
-                      {network.isCustom && (
-                        <>
-                          <button
-                            onClick={() => handleEdit(network)}
-                            className="p-1.5 hover:bg-indigo-500/20 rounded transition-colors"
-                            title={t('common.edit')}
-                          >
-                            <Edit className="w-4 h-4 text-indigo-400" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(network.id)}
-                            className="p-1.5 hover:bg-red-500/20 rounded transition-colors"
-                            title={t('common.delete')}
-                          >
-                            <Trash2 className="w-4 h-4 text-red-400" />
-                          </button>
-                        </>
-                      )}
-                      <a
-                        href={network.explorerUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 hover:bg-gray-700 rounded transition-colors"
-                        title={t('settings.browser')}
-                      >
-                        <ExternalLink className="w-4 h-4 text-gray-400" />
-                      </a>
-                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Info Card */}
-        <Card className="bg-indigo-500/10 border-indigo-500/30">
-          <CardContent className="p-4">
-            <p className="text-indigo-200 text-sm">
-              {t('settings.networkInfo')}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
+          <p className="text-blue-800 text-sm">
+            {t('settings.networkInfo')}
+          </p>
+        </div>
       </div>
 
-      {/* Add Network Dialog */}
+      {/* Add Network Dialog - TP Style */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-white">
           <DialogHeader>
-            <DialogTitle>{t('settings.addNetworkTitle')}</DialogTitle>
-            <DialogDescription>{t('settings.addNetworkDesc')}</DialogDescription>
+            <DialogTitle className="text-gray-900">{t('settings.addNetworkTitle')}</DialogTitle>
+            <DialogDescription className="text-gray-600">{t('settings.addNetworkDesc')}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.networkName')} *</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.networkName')} *</label>
               <Input
                 type="text"
                 placeholder={t('settings.networkNamePlaceholder')}
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.chainId')} *</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.chainId')} *</label>
               <Input
                 type="number"
                 placeholder={t('settings.chainIdPlaceholder')}
                 value={formData.chainId}
                 onChange={(e) => setFormData({ ...formData, chainId: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.symbol')} *</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.symbol')} *</label>
               <Input
                 type="text"
                 placeholder={t('settings.symbolPlaceholder')}
                 value={formData.symbol}
                 onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.rpcUrl')} *</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.rpcUrl')} *</label>
               <Input
                 type="url"
                 placeholder={t('settings.rpcUrlPlaceholder')}
                 value={formData.rpcUrl}
                 onChange={(e) => setFormData({ ...formData, rpcUrl: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.explorer')}</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.explorer')}</label>
               <Input
                 type="url"
                 placeholder={t('settings.explorerPlaceholder')}
                 value={formData.explorerUrl}
                 onChange={(e) => setFormData({ ...formData, explorerUrl: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             {validationError && (
-              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-sm">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                 {validationError}
               </div>
             )}
@@ -464,14 +466,14 @@ export function SettingsPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setIsAddDialogOpen(false)}
-                className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-colors font-medium"
               >
                 {t('common.cancel')}
               </button>
               <button
                 onClick={handleAddNetwork}
                 disabled={isValidating}
-                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium shadow-md"
               >
                 {isValidating ? t('settings.validating') : t('common.add')}
               </button>
@@ -480,68 +482,68 @@ export function SettingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Network Dialog */}
+      {/* Edit Network Dialog - TP Style */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-white">
           <DialogHeader>
-            <DialogTitle>{t('settings.editNetworkTitle')}</DialogTitle>
-            <DialogDescription>{t('settings.editNetworkDesc')}</DialogDescription>
+            <DialogTitle className="text-gray-900">{t('settings.editNetworkTitle')}</DialogTitle>
+            <DialogDescription className="text-gray-600">{t('settings.editNetworkDesc')}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.networkName')} *</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.networkName')} *</label>
               <Input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.chainId')}</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.chainId')}</label>
               <Input
                 type="number"
                 value={formData.chainId}
                 disabled
-                className="bg-gray-900 border-gray-700 text-gray-500"
+                className="bg-gray-100 border-gray-200 text-gray-500"
               />
               <p className="text-xs text-gray-500 mt-1">{t('settings.chainIdNotEditable')}</p>
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.symbol')} *</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.symbol')} *</label>
               <Input
                 type="text"
                 value={formData.symbol}
                 onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.rpcUrl')} *</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.rpcUrl')} *</label>
               <Input
                 type="url"
                 value={formData.rpcUrl}
                 onChange={(e) => setFormData({ ...formData, rpcUrl: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-400 mb-1 block">{t('settings.explorer')}</label>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">{t('settings.explorer')}</label>
               <Input
                 type="url"
                 value={formData.explorerUrl}
                 onChange={(e) => setFormData({ ...formData, explorerUrl: e.target.value })}
-                className="bg-gray-900 border-gray-700 text-white"
+                className="bg-gray-50 border-gray-200 text-gray-900"
               />
             </div>
 
             {validationError && (
-              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-sm">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                 {validationError}
               </div>
             )}
@@ -549,13 +551,13 @@ export function SettingsPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setIsEditDialogOpen(false)}
-                className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-colors font-medium"
               >
                 {t('common.cancel')}
               </button>
               <button
                 onClick={handleUpdateNetwork}
-                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                className="flex-1 px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-colors font-medium shadow-md"
               >
                 {t('common.save')}
               </button>

@@ -24,6 +24,7 @@ export function LazyImage({
 
   useEffect(() => {
     // Use Intersection Observer for lazy loading
+    const node = imgRef.current;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -45,8 +46,8 @@ export function LazyImage({
             };
 
             // Stop observing once we've started loading
-            if (imgRef.current) {
-              observer.unobserve(imgRef.current);
+            if (node) {
+              observer.unobserve(node);
             }
           }
         });
@@ -57,13 +58,13 @@ export function LazyImage({
       }
     );
 
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
+    if (node) {
+      observer.observe(node);
     }
 
     return () => {
-      if (imgRef.current) {
-        observer.unobserve(imgRef.current);
+      if (node) {
+        observer.unobserve(node);
       }
     };
   }, [src, onLoad, onError]);

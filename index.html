@@ -7,6 +7,27 @@
     <title>web3-wallet</title>
   </head>
   <body>
+    <!-- 快速补丁：在任何模块加载前拦截对 window.ethereum 的重定义 -->
+    <script>
+      (function(){
+        try {
+          const origDef = Object.defineProperty;
+          Object.defineProperty = function(obj, prop, descriptor) {
+            if (prop === 'ethereum') {
+              try {
+                return origDef.call(Object, obj, prop, descriptor);
+              } catch (err) {
+                console.warn('Suppressed defineProperty error for ethereum (inline patch)', err);
+                return obj;
+              }
+            }
+            return origDef.call(Object, obj, prop, descriptor);
+          };
+        } catch (e) {
+          console.warn('Failed inline patch for defineProperty', e);
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

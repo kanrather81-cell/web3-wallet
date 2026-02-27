@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { Card, CardContent } from '../components/ui/card';
 import {
   ArrowLeft,
   ArrowRight,
@@ -138,15 +137,15 @@ export function BrowserPage() {
   const displayUrl = currentUrl.replace(/^https?:\/\//, '');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex flex-col pb-24">
       {/* Browser Header */}
-      <div className="bg-gray-900 border-b border-gray-700 p-4">
+      <div className="bg-gradient-tp pt-12 pb-6 px-4 rounded-b-[32px] mb-4">
         <div className="max-w-7xl mx-auto space-y-3">
           {/* Navigation Bar */}
           <div className="flex items-center gap-2">
             <button
               onClick={handleHome}
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+              className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-colors backdrop-blur-sm"
               title="返回首页"
             >
               <Home className="w-5 h-5" />
@@ -155,7 +154,7 @@ export function BrowserPage() {
             <button
               onClick={handleGoBack}
               disabled={!canGoBack}
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
               title="后退"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -164,7 +163,7 @@ export function BrowserPage() {
             <button
               onClick={handleGoForward}
               disabled={!canGoForward}
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
               title="前进"
             >
               <ArrowRight className="w-5 h-5" />
@@ -173,7 +172,7 @@ export function BrowserPage() {
             <button
               onClick={handleRefresh}
               disabled={!currentUrl}
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
               title="刷新"
             >
               <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -185,9 +184,9 @@ export function BrowserPage() {
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
                   {currentUrl ? (
                     isSecure ? (
-                      <Lock className="w-4 h-4 text-green-400" />
+                      <Lock className="w-4 h-4 text-green-500" />
                     ) : (
-                      <Unlock className="w-4 h-4 text-yellow-400" />
+                      <Unlock className="w-4 h-4 text-yellow-500" />
                     )
                   ) : (
                     <Globe className="w-4 h-4 text-gray-400" />
@@ -198,14 +197,14 @@ export function BrowserPage() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="输入网址或搜索..."
-                  className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white/90 backdrop-blur-sm border-0 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50"
                 />
               </div>
             </form>
 
             {/* Wallet Status */}
             {isConnected && (
-              <div className="px-3 py-2 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400 text-sm font-medium whitespace-nowrap">
+              <div className="px-3 py-2 bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl text-white text-sm font-medium whitespace-nowrap">
                 钱包已连接
               </div>
             )}
@@ -213,11 +212,11 @@ export function BrowserPage() {
 
           {/* Current URL Display */}
           {currentUrl && (
-            <div className="flex items-center gap-2 text-sm text-gray-400">
+            <div className="flex items-center gap-2 text-sm text-white/80">
               {isSecure ? (
-                <Lock className="w-3 h-3 text-green-400" />
+                <Lock className="w-3 h-3 text-green-300" />
               ) : (
-                <Unlock className="w-3 h-3 text-yellow-400" />
+                <Unlock className="w-3 h-3 text-yellow-300" />
               )}
               <span className="truncate">{displayUrl}</span>
             </div>
@@ -226,72 +225,84 @@ export function BrowserPage() {
       </div>
 
       {/* Browser Content */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative mx-4">
         {!currentUrl ? (
-          <div className="h-full flex items-center justify-center p-4">
-            <Card className="bg-gray-800/50 border-gray-700 max-w-2xl w-full">
-              <CardContent className="p-12 text-center">
-                <Globe className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-white mb-2">DApp 浏览器</h2>
-                <p className="text-gray-400 mb-6">
+          <div className="h-full flex items-center justify-center">
+            <div className="bg-white rounded-2xl shadow-sm max-w-2xl w-full p-12">
+              <div className="text-center">
+                <Globe className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">DApp 浏览器</h2>
+                <p className="text-gray-600 mb-6">
                   在地址栏输入 DApp 网址开始浏览
                 </p>
                 <div className="space-y-2 text-left">
-                  <p className="text-sm text-gray-500">推荐 DApp：</p>
+                  <p className="text-sm text-gray-500 font-medium mb-3">推荐 DApp：</p>
                   <button
                     onClick={() => {
                       setUrl('app.uniswap.org');
                       loadUrl('app.uniswap.org');
                     }}
-                    className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors text-left"
+                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 text-gray-900 rounded-xl transition-colors text-left flex items-center gap-3"
                   >
-                    🦄 Uniswap - app.uniswap.org
+                    <span className="text-2xl">🦄</span>
+                    <div>
+                      <div className="font-semibold">Uniswap</div>
+                      <div className="text-sm text-gray-500">app.uniswap.org</div>
+                    </div>
                   </button>
                   <button
                     onClick={() => {
                       setUrl('app.aave.com');
                       loadUrl('app.aave.com');
                     }}
-                    className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors text-left"
+                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 text-gray-900 rounded-xl transition-colors text-left flex items-center gap-3"
                   >
-                    👻 Aave - app.aave.com
+                    <span className="text-2xl">👻</span>
+                    <div>
+                      <div className="font-semibold">Aave</div>
+                      <div className="text-sm text-gray-500">app.aave.com</div>
+                    </div>
                   </button>
                   <button
                     onClick={() => {
                       setUrl('opensea.io');
                       loadUrl('opensea.io');
                     }}
-                    className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors text-left"
+                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 text-gray-900 rounded-xl transition-colors text-left flex items-center gap-3"
                   >
-                    🌊 OpenSea - opensea.io
+                    <span className="text-2xl">🌊</span>
+                    <div>
+                      <div className="font-semibold">OpenSea</div>
+                      <div className="text-sm text-gray-500">opensea.io</div>
+                    </div>
                   </button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         ) : error ? (
-          <div className="h-full flex items-center justify-center p-4">
-            <Card className="bg-red-500/10 border-red-500/30 max-w-md w-full">
-              <CardContent className="p-8 text-center">
-                <AlertTriangle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">加载失败</h3>
-                <p className="text-red-400 mb-4">{error}</p>
+          <div className="h-full flex items-center justify-center">
+            <div className="bg-red-50 border border-red-200 rounded-2xl max-w-md w-full p-8">
+              <div className="text-center">
+                <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">加载失败</h3>
+                <p className="text-red-600 mb-4">{error}</p>
                 <button
                   onClick={() => setError('')}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                  className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors font-medium"
                 >
                   重试
                 </button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         ) : (
-          <>
+          <div className="h-full bg-white rounded-2xl shadow-sm overflow-hidden relative">
             {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-900/50 z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10 backdrop-blur-sm">
                 <div className="text-center">
-                  <RefreshCw className="w-12 h-12 text-indigo-400 animate-spin mx-auto mb-4" />
-                  <p className="text-white">加载中...</p>
+                  <RefreshCw className="w-12 h-12 text-primary-600 animate-spin mx-auto mb-4" />
+                  <p className="text-gray-900 font-medium">加载中...</p>
                 </div>
               </div>
             )}
@@ -307,15 +318,15 @@ export function BrowserPage() {
               }}
               title="DApp Browser"
             />
-          </>
+          </div>
         )}
       </div>
 
       {/* Security Warning */}
       {currentUrl && !isSecure && (
-        <div className="bg-yellow-500/10 border-t border-yellow-500/30 p-2">
-          <div className="max-w-7xl mx-auto flex items-center gap-2 text-yellow-400 text-sm">
-            <AlertTriangle className="w-4 h-4" />
+        <div className="bg-yellow-50 border-t border-yellow-200 p-3 mx-4 mt-4 rounded-xl">
+          <div className="max-w-7xl mx-auto flex items-center gap-2 text-yellow-700 text-sm">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>此连接不安全。请谨慎操作，不要输入敏感信息。</span>
           </div>
         </div>

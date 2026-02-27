@@ -4,6 +4,8 @@ import { WagmiProvider } from 'wagmi';
 import { config } from '../config/wagmi';
 import { SolanaProvider } from '../lib/providers/SolanaProvider';
 import { TronProvider } from './TronProvider';
+import { WalletProvider } from '../contexts/WalletContext';
+import { Toaster } from 'sonner';
 
 const queryClient = new QueryClient();
 
@@ -13,7 +15,10 @@ export function Providers({ children }: { children: ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <SolanaProvider>
           <TronProvider>
-            {children}
+            <WalletProvider>
+              <Toaster position="top-center" richColors />
+              {children}
+            </WalletProvider>
           </TronProvider>
         </SolanaProvider>
       </QueryClientProvider>

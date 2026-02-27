@@ -35,7 +35,7 @@ export function useMultiChainBalance(): MultiChainBalanceResult {
 
   // Fetch balance for each supported chain
   const balanceQueries = supportedChains.map((chain) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+     
     return useBalance({
       address,
       chainId: chain.id,
@@ -55,20 +55,35 @@ export function useMultiChainBalance(): MultiChainBalanceResult {
         const btcAddress = localStorage.getItem('bitcoin_address');
         const tronAddress = localStorage.getItem('tron_address');
 
+        // 并行获取余额，但不阻塞
+        const promises = [];
+
         if (solAddress) {
-          const solBal = await getSolanaBalance(solAddress);
-          setSolanaBalance(solBal.toFixed(6));
+          promises.push(
+            getSolanaBalance(solAddress)
+              .then(bal => setSolanaBalance(bal.toFixed(6)))
+              .catch(err => console.error('Solana balance error:', err))
+          );
         }
 
         if (btcAddress) {
-          const btcBal = await getBitcoinBalance(btcAddress);
-          setBitcoinBalance(btcBal.toFixed(8));
+          promises.push(
+            getBitcoinBalance(btcAddress)
+              .then(bal => setBitcoinBalance(bal.toFixed(8)))
+              .catch(err => console.error('Bitcoin balance error:', err))
+          );
         }
 
         if (tronAddress) {
-          const trxBal = await getTronBalance(tronAddress);
-          setTronBalance(trxBal.toFixed(6));
+          promises.push(
+            getTronBalance(tronAddress)
+              .then(bal => setTronBalance(bal.toFixed(6)))
+              .catch(err => console.error('Tron balance error:', err))
+          );
         }
+
+        // 等待所有请求完成（即使有错误也继续）
+        await Promise.allSettled(promises);
       } catch (error) {
         console.error('Error fetching non-EVM balances:', error);
       } finally {
@@ -77,6 +92,10 @@ export function useMultiChainBalance(): MultiChainBalanceResult {
     };
 
     fetchNonEvmBalances();
+
+    // 每60秒刷新一次（减少API调用频率）
+    const interval = setInterval(fetchNonEvmBalances, 60000);
+    return () => clearInterval(interval);
   }, [address]);
 
   // Process EVM balances

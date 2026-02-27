@@ -17,7 +17,9 @@ export function SolanaConnectButton() {
   useEffect(() => {
     const checkPhantom = () => {
       const hasWindow = typeof window !== 'undefined';
-      const solana = (window as any)?.solana;
+       
+      const { getSafeWindowProp } = require('../../lib/utils/safeWindow');
+      const solana = getSafeWindowProp('solana');
       const hasPhantom = solana?.isPhantom || false;
       const phantomVersion = solana?.version || 'unknown';
       
@@ -64,7 +66,11 @@ export function SolanaConnectButton() {
             ⚠️ 未检测到 Phantom 钱包，请先安装
           </p>
           <button
-            onClick={() => window.open('https://phantom.app/', '_blank')}
+            onClick={() => {
+              try {
+                window.open('https://phantom.app/', '_blank');
+              } catch {}
+            }}
             className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             安装 Phantom 钱包

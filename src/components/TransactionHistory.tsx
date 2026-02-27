@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { TransactionHistoryService, type Transaction } from '../services/transactionHistory';
+import { TransactionFilter, type TransactionFilterOptions } from './TransactionFilter';
 import { Card, CardContent } from './ui/card';
 import { Skeleton } from './ui/skeleton';
 import {
@@ -16,8 +17,10 @@ import {
 export function TransactionHistory() {
   const { address } = useAccount();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedChain, setSelectedChain] = useState<number | 'all'>('all');
+  const [filters, setFilters] = useState<TransactionFilterOptions>({});
 
   const chains = [
     { id: 'all' as const, name: '所有链' },
@@ -33,6 +36,65 @@ export function TransactionHistory() {
       loadTransactions();
     }
   }, [address, selectedChain]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [transactions, filters]);
+
+  const applyFilters = () => {
+    let filtered = [...transactions];
+
+    // Filter by chain
+    if (filters.chainType && filters.chainType !== 'all') {
+      const chainIdMap: Record<string, number> = {
+        ethereum: 1,
+        polygon: 137,
+        optimism: 10,
+        arbitrum: 42161,
+        base: 8453,
+      };
+      const chainId = chainIdMap[filters.chainType];
+      if (chainId) {
+        filtered = filtered.filter((tx) => tx.chainId === chainId);
+      }
+    }
+
+    // Filter by transaction type
+    if (filters.transactionType && filters.transactionType !== 'all') {
+      filtered = filtered.filter((tx) => tx.type === filters.transactionType);
+    }
+
+    // Filter by token type
+    if (filters.tokenType && filters.tokenType !== 'all') {
+      if (filters.tokenType === 'native') {
+        filtered = filtered.filter((tx) => !tx.tokenSymbol);
+      } else if (filters.tokenType === 'erc20') {
+        filtered = filtered.filter((tx) => tx.tokenSymbol && tx.tokenSymbol !== 'SOL');
+      } else if (filters.tokenType === 'spl') {
+        filtered = filtered.filter((tx) => tx.tokenSymbol === 'SOL');
+      }
+    }
+
+    // Filter by date range
+    if (filters.dateFrom) {
+      const fromDate = new Date(filters.dateFrom).getTime() / 1000;
+      filtered = filtered.filter((tx) => tx.timestamp >= fromDate);
+    }
+    if (filters.dateTo) {
+      const toDate = new Date(filters.dateTo).getTime() / 1000 + 86400; // End of day
+      filtered = filtered.filter((tx) => tx.timestamp <= toDate);
+    }
+
+    setFilteredTransactions(filtered);
+  };
+
+  const handleFilterChange = (newFilters: TransactionFilterOptions) => {
+    setFilters(newFilters);
+  };
+
+  const handleFilterReset = () => {
+    setFilters({});
+  };
 
   const loadTransactions = async () => {
     if (!address) return;
@@ -134,20 +196,32 @@ export function TransactionHistory() {
     );
   }
 
-  if (transactions.length === 0) {
+  if (filteredTransactions.length === 0 && !isLoading) {
     return (
-      <Card className="bg-gray-800/50 border-gray-700">
-        <CardContent className="p-12 text-center">
-          <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400 mb-2">还没有交易记录</p>
-          <p className="text-gray-500 text-sm">你的交易历史将显示在这里</p>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        <TransactionFilter onFilterChange={handleFilterChange} onReset={handleFilterReset} />
+        <Card className="bg-gray-800/50 border-gray-700">
+          <CardContent className="p-12 text-center">
+            <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-400 mb-2">
+              {transactions.length === 0 ? '还没有交易记录' : '没有符合筛选条件的交易'}
+            </p>
+            <p className="text-gray-500 text-sm">
+              {transactions.length === 0
+                ? '你的交易历史将显示在这里'
+                : '尝试调整筛选条件'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      {/* Transaction Filter */}
+      <TransactionFilter onFilterChange={handleFilterChange} onReset={handleFilterReset} />
+
       {/* Chain Filter */}
       <div className="flex gap-2 overflow-x-auto pb-2">
         {chains.map((chain) => (
@@ -167,7 +241,7 @@ export function TransactionHistory() {
 
       {/* Transaction List */}
       <div className="space-y-3">
-        {transactions.map((tx) => (
+        {filteredTransactions.map((tx) => (
           <Card
             key={`${tx.chainId}-${tx.hash}`}
             className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all cursor-pointer group"
@@ -254,7 +328,7 @@ export function TransactionHistory() {
       </div>
 
       {/* Load More Button (Optional) */}
-      {transactions.length >= 20 && (
+      {filteredTransactions.length >= 20 && (
         <button
           onClick={loadTransactions}
           className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-colors"

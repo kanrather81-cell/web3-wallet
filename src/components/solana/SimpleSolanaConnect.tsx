@@ -15,7 +15,9 @@ export function SimpleSolanaConnect() {
   useEffect(() => {
     const checkPhantom = () => {
       const hasWindow = typeof window !== 'undefined';
-      const solana = (window as any)?.solana;
+       
+      const { getSafeWindowProp } = require('../lib/utils/safeWindow');
+      const solana = getSafeWindowProp('solana');
       const hasPhantom = solana?.isPhantom || false;
       const phantomVersion = solana?.version || 'unknown';
       
@@ -44,7 +46,9 @@ export function SimpleSolanaConnect() {
   useEffect(() => {
     const checkConnection = async () => {
       try {
-        const { solana } = window as any;
+         
+        const { getSafeWindowProp } = require('../lib/utils/safeWindow');
+        const solana = getSafeWindowProp('solana');
         if (solana?.isPhantom && solana.isConnected && solana.publicKey) {
           setAddress(solana.publicKey.toString());
         }
@@ -61,12 +65,13 @@ export function SimpleSolanaConnect() {
     setError(null);
     
     try {
-      const { solana } = window as any;
-      
-      if (!solana?.isPhantom) {
-        throw new Error('请安装 Phantom 钱包');
-      }
-
+         
+        const { getSafeWindowProp } = require('../lib/utils/safeWindow');
+        const solana = getSafeWindowProp('solana');
+        
+        if (!solana?.isPhantom) {
+          throw new Error('请安装 Phantom 钱包');
+        }
       console.log('🔗 开始连接 Phantom...');
       
       // 如果已经连接，先断开
@@ -116,7 +121,9 @@ export function SimpleSolanaConnect() {
 
   const handleDisconnect = async () => {
     try {
-      const { solana } = window as any;
+       
+      const { getSafeWindowProp } = require('../lib/utils/safeWindow');
+      const solana = getSafeWindowProp('solana');
       if (solana) {
         await solana.disconnect();
       }
@@ -202,7 +209,9 @@ export function SimpleSolanaConnect() {
             <button
               onClick={async () => {
                 try {
-                  const { solana } = window as any;
+                   
+                  const { getSafeWindowProp } = require('../lib/utils/safeWindow');
+                  const solana = getSafeWindowProp('solana');
                   if (solana) {
                     await solana.disconnect();
                     setError(null);

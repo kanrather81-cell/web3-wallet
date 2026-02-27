@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ReactECharts from 'echarts-for-react';
 import { coingeckoService, type CoinDetail, type ChartData } from '../services/coingecko';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Skeleton } from '../components/ui/skeleton';
-import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 export function CoinDetailPage() {
   const { coinId } = useParams<{ coinId: string }>();
-  const navigate = useNavigate();
   const [coin, setCoin] = useState<CoinDetail | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -126,7 +124,7 @@ export function CoinDetailPage() {
 
   if (loading || !coin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
+      <div className="min-h-screen bg-gray-50 p-6 pb-24">
         <div className="max-w-6xl mx-auto pt-8 space-y-4">
           <Skeleton className="h-12 w-64" />
           <Skeleton className="h-64 w-full" />
@@ -144,33 +142,28 @@ export function CoinDetailPage() {
   const isPositive = priceChange24h >= 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
-      <div className="max-w-6xl mx-auto pt-8 space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate('/market')}
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <img src={coin.image.large} alt={coin.name} className="w-12 h-12 rounded-full" />
-          <div>
-            <h1 className="text-3xl font-bold text-white">{coin.name}</h1>
-            <p className="text-gray-400 uppercase">{coin.symbol}</p>
+    <div className="min-h-screen bg-gray-50 pb-24">
+      {/* 顶部渐变区域 */}
+      <div className="bg-gradient-tp pt-12 pb-8 px-6 rounded-b-[32px] mb-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-6">
+            <img src={coin.image.large} alt={coin.name} className="w-16 h-16 rounded-full bg-white p-2" />
+            <div>
+              <h1 className="text-3xl font-bold text-white">{coin.name}</h1>
+              <p className="text-white/80 uppercase text-sm">{coin.symbol}</p>
+            </div>
           </div>
-        </div>
 
-        {/* Price Card */}
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardContent className="p-6">
-            <div className="flex items-baseline gap-4">
+          {/* Price Display */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+            <div className="flex items-baseline gap-4 flex-wrap">
               <span className="text-4xl font-bold text-white">
-                {formatPrice(coin.market_data.current_price.usd)}
+                ${formatPrice(coin.market_data.current_price.usd)}
               </span>
               <div
                 className={`flex items-center gap-1 text-lg ${
-                  isPositive ? 'text-green-400' : 'text-red-400'
+                  isPositive ? 'text-green-300' : 'text-red-300'
                 }`}
               >
                 {isPositive ? (
@@ -181,89 +174,77 @@ export function CoinDetailPage() {
                 {Math.abs(priceChange24h).toFixed(2)}%
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+      </div>
 
+      <div className="max-w-6xl mx-auto px-6 space-y-6">
         {/* Chart */}
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-white">Price Chart</CardTitle>
-              <div className="flex gap-2">
-                {[
-                  { label: '24H', days: 1 },
-                  { label: '7D', days: 7 },
-                  { label: '30D', days: 30 },
-                  { label: '90D', days: 90 },
-                  { label: '1Y', days: 365 },
-                ].map((range) => (
-                  <button
-                    key={range.days}
-                    onClick={() => setTimeRange(range.days)}
-                    className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                      timeRange === range.days
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    }`}
-                  >
-                    {range.label}
-                  </button>
-                ))}
-              </div>
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
+            <h2 className="text-lg font-semibold text-gray-900">价格走势</h2>
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { label: '24H', days: 1 },
+                { label: '7D', days: 7 },
+                { label: '30D', days: 30 },
+                { label: '90D', days: 90 },
+                { label: '1Y', days: 365 },
+              ].map((range) => (
+                <button
+                  key={range.days}
+                  onClick={() => setTimeRange(range.days)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    timeRange === range.days
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {range.label}
+                </button>
+              ))}
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[400px]">
-              <ReactECharts option={getChartOption()} style={{ height: '100%' }} />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="h-[400px]">
+            <ReactECharts option={getChartOption()} style={{ height: '100%' }} />
+          </div>
+        </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="bg-gray-800/50 border-gray-700">
-            <CardHeader>
-              <CardDescription className="text-gray-400">Market Cap</CardDescription>
-              <CardTitle className="text-white">
-                {formatMarketCap(coin.market_data.market_cap.usd)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="text-sm text-gray-600 mb-2">市值</div>
+            <div className="text-2xl font-bold text-gray-900">
+              ${formatMarketCap(coin.market_data.market_cap.usd)}
+            </div>
+          </div>
 
-          <Card className="bg-gray-800/50 border-gray-700">
-            <CardHeader>
-              <CardDescription className="text-gray-400">24h Volume</CardDescription>
-              <CardTitle className="text-white">
-                {formatMarketCap(coin.market_data.total_volume.usd)}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="text-sm text-gray-600 mb-2">24小时交易量</div>
+            <div className="text-2xl font-bold text-gray-900">
+              ${formatMarketCap(coin.market_data.total_volume.usd)}
+            </div>
+          </div>
 
-          <Card className="bg-gray-800/50 border-gray-700">
-            <CardHeader>
-              <CardDescription className="text-gray-400">Circulating Supply</CardDescription>
-              <CardTitle className="text-white">
-                {coin.market_data.circulating_supply.toLocaleString()} {coin.symbol.toUpperCase()}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="text-sm text-gray-600 mb-2">流通供应量</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {coin.market_data.circulating_supply.toLocaleString()} {coin.symbol.toUpperCase()}
+            </div>
+          </div>
         </div>
 
         {/* Description */}
         {coin.description.en && (
-          <Card className="bg-gray-800/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">About {coin.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className="text-gray-300 prose prose-invert max-w-none"
-                dangerouslySetInnerHTML={{
-                  __html: coin.description.en.split('.').slice(0, 3).join('.') + '.',
-                }}
-              />
-            </CardContent>
-          </Card>
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">关于 {coin.name}</h2>
+            <div
+              className="text-gray-700 prose max-w-none"
+              dangerouslySetInnerHTML={{
+                __html: coin.description.en.split('.').slice(0, 3).join('.') + '.',
+              }}
+            />
+          </div>
         )}
       </div>
     </div>

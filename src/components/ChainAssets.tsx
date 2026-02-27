@@ -2,6 +2,8 @@ import { useSolana } from '../lib/hooks/useSolana';
 import { useBitcoin } from '../lib/hooks/useBitcoin';
 import { useTron } from '../lib/hooks/useTron';
 import { Card, CardContent } from './ui/card';
+import { useNavigate } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 
 interface ChainAssetCardProps {
   chainName: string;
@@ -10,15 +12,25 @@ interface ChainAssetCardProps {
   address: string | null;
   isLoading: boolean;
   iconColor: string;
+  chainId: string;
 }
 
-function ChainAssetCard({ chainName, symbol, balance, address, isLoading, iconColor }: ChainAssetCardProps) {
+function ChainAssetCard({ chainName, symbol, balance, address, isLoading, iconColor, chainId }: ChainAssetCardProps) {
+  const navigate = useNavigate();
+
   if (!address) {
     return null;
   }
 
+  const handleClick = () => {
+    navigate(`/token/${chainId}`);
+  };
+
   return (
-    <Card className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors">
+    <Card 
+      className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors cursor-pointer"
+      onClick={handleClick}
+    >
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -35,20 +47,23 @@ function ChainAssetCard({ chainName, symbol, balance, address, isLoading, iconCo
             </div>
           </div>
 
-          <div className="text-right">
-            {isLoading ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-                <span className="text-gray-400">加载中...</span>
-              </div>
-            ) : (
-              <>
-                <p className="text-2xl font-bold text-white">
-                  {balance.toFixed(symbol === 'BTC' ? 8 : 6)}
-                </p>
-                <p className="text-sm text-gray-400">{symbol}</p>
-              </>
-            )}
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-gray-400">加载中...</span>
+                </div>
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-white">
+                    {balance.toFixed(symbol === 'BTC' ? 8 : 6)}
+                  </p>
+                  <p className="text-sm text-gray-400">{symbol}</p>
+                </>
+              )}
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400" />
           </div>
         </div>
       </CardContent>
@@ -85,6 +100,7 @@ export function ChainAssets() {
           address={solana.address}
           isLoading={solana.isLoading || false}
           iconColor="bg-purple-600"
+          chainId="solana"
         />
       )}
 
@@ -96,6 +112,7 @@ export function ChainAssets() {
           address={bitcoin.address}
           isLoading={bitcoin.isLoading || false}
           iconColor="bg-orange-500"
+          chainId="bitcoin"
         />
       )}
 
@@ -107,6 +124,7 @@ export function ChainAssets() {
           address={tron.address}
           isLoading={tron.isLoading || false}
           iconColor="bg-red-600"
+          chainId="tron"
         />
       )}
     </div>

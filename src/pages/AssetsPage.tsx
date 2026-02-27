@@ -7,12 +7,13 @@ import { TransactionHistory } from '../components/TransactionHistory';
 import { ChainConnectors } from '../components/ChainConnectors';
 import { ChainAssets } from '../components/ChainAssets';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { CustomTokenList } from '../components/CustomTokenList';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { ChainIcon } from '../components/ChainIcon';
 import { AssetsLoadingSkeleton } from '../components/AssetsLoadingSkeleton';
 import { AssetsChart } from '../components/AssetsChart';
-import { Wallet, TrendingUp, RefreshCw, BarChart3, ArrowLeftRight, Compass, Heart, Coins, Image, History, Settings, Globe } from 'lucide-react';
+import { Wallet, RefreshCw, ArrowLeftRight, History, Globe, Coins, Image } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 
 export function AssetsPage() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export function AssetsPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 pb-24">
         <div className="max-w-md w-full">
           <ConnectWallet />
         </div>
@@ -32,7 +33,7 @@ export function AssetsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
+      <div className="min-h-screen bg-gray-50 p-4 pb-24">
         <div className="max-w-4xl mx-auto pt-8">
           <ConnectWallet />
           <AssetsLoadingSkeleton />
@@ -42,107 +43,81 @@ export function AssetsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
-      <div className="max-w-4xl mx-auto pt-8 space-y-6">
-        <ConnectWallet />
+    <div className="min-h-screen bg-gray-50 pb-24">
+      {/* 顶部渐变区域 */}
+      <div className="bg-gradient-tp pt-12 pb-8 px-6 rounded-b-[32px] mb-6">
+        <div className="max-w-4xl mx-auto">
+          <ConnectWallet />
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Wallet className="w-8 h-8 text-indigo-400" />
-            <h1 className="text-3xl font-bold text-white">Multi-Chain Assets</h1>
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6 mt-6">
+            <Wallet className="w-8 h-8 text-white" />
+            <h1 className="text-3xl font-bold text-white">多链资产</h1>
           </div>
-          <div className="flex gap-2 flex-wrap">
+
+          {/* Total Balance Card */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+            <p className="text-white/80 text-sm mb-2">总余额 (ETH)</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-5xl font-bold text-white">{totalBalanceInETH}</span>
+              <span className="text-2xl text-white/80">ETH</span>
+            </div>
+            <p className="text-sm text-white/70 mt-2">
+              聚合自 Ethereum, Optimism, Arbitrum 和 Base
+            </p>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-4 gap-3 mt-6">
+            <button
+              onClick={() => navigate('/send')}
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center gap-2 transition-all"
+            >
+              <ArrowLeftRight className="w-6 h-6 text-white" />
+              <span className="text-white text-sm font-medium">发送</span>
+            </button>
+            <button
+              onClick={() => navigate('/history')}
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center gap-2 transition-all"
+            >
+              <History className="w-6 h-6 text-white" />
+              <span className="text-white text-sm font-medium">历史</span>
+            </button>
             <button
               onClick={() => navigate('/browser')}
-              className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center gap-2 transition-all"
             >
-              <Globe className="w-4 h-4" />
-              浏览器
-            </button>
-            <button
-              onClick={() => navigate('/settings')}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-            >
-              <Settings className="w-4 h-4" />
-              设置
-            </button>
-            <button
-              onClick={() => navigate('/dapps')}
-              className="flex items-center gap-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors"
-            >
-              <Heart className="w-4 h-4" />
-              我的 DApps
-            </button>
-            <button
-              onClick={() => navigate('/discover')}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-            >
-              <Compass className="w-4 h-4" />
-              Discover
-            </button>
-            <button
-              onClick={() => navigate('/swap')}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              <ArrowLeftRight className="w-4 h-4" />
-              Swap
-            </button>
-            <button
-              onClick={() => navigate('/market')}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-            >
-              <BarChart3 className="w-4 h-4" />
-              Market
+              <Globe className="w-6 h-6 text-white" />
+              <span className="text-white text-sm font-medium">浏览器</span>
             </button>
             <button
               onClick={() => window.location.reload()}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl p-4 flex flex-col items-center gap-2 transition-all"
             >
-              <RefreshCw className="w-4 h-4" />
-              Refresh
+              <RefreshCw className="w-6 h-6 text-white" />
+              <span className="text-white text-sm font-medium">刷新</span>
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Total Balance Card */}
-        <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 border-none text-white">
-          <CardHeader>
-            <CardDescription className="text-indigo-100">
-              Total Balance (ETH)
-            </CardDescription>
-            <CardTitle className="text-5xl font-bold flex items-baseline gap-2">
-              {totalBalanceInETH}
-              <span className="text-2xl font-normal">ETH</span>
-            </CardTitle>
-            <p className="text-sm text-indigo-100 mt-2">
-              Aggregated from Ethereum, Optimism, Arbitrum, and Base
-            </p>
-          </CardHeader>
-        </Card>
-
+      <div className="max-w-4xl mx-auto px-6 space-y-6">
         {hasError && (
-          <Card className="bg-yellow-500/10 border-yellow-500/50">
-            <CardContent className="p-4">
-              <p className="text-yellow-200 text-sm">
-                ⚠️ Some balances could not be loaded. Please check your connection.
-              </p>
-            </CardContent>
-          </Card>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <p className="text-yellow-700 text-sm">
+              ⚠️ 部分余额无法加载，请检查网络连接。
+            </p>
+          </div>
         )}
 
         {/* Assets Chart */}
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-indigo-400" />
-              <CardTitle className="text-white">Asset Distribution</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <AssetsChart balances={balances} />
-          </CardContent>
-        </Card>
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp className="w-5 h-5 text-primary-600" />
+            <h2 className="text-lg font-semibold text-gray-900">资产分布</h2>
+          </div>
+          <AssetsChart balances={balances} />
+        </div>
 
         {/* Multi-Chain Connectors */}
         <ErrorBoundary>
@@ -154,18 +129,22 @@ export function AssetsPage() {
           <ChainAssets />
         </ErrorBoundary>
 
-        {/* Tabs for Tokens, NFTs, and History */}
+        {/* Tabs for Tokens, NFTs, Custom Tokens, and History */}
         <Tabs defaultValue="tokens" className="w-full">
-          <TabsList className="w-full sm:w-auto">
-            <TabsTrigger value="tokens" className="flex items-center gap-2">
+          <TabsList className="w-full sm:w-auto grid grid-cols-4 gap-1 bg-white rounded-xl p-1">
+            <TabsTrigger value="tokens" className="flex items-center gap-2 data-[state=active]:bg-primary-600 data-[state=active]:text-white rounded-lg">
               <Coins className="w-4 h-4" />
               代币
             </TabsTrigger>
-            <TabsTrigger value="nfts" className="flex items-center gap-2">
+            <TabsTrigger value="custom" className="flex items-center gap-2 data-[state=active]:bg-primary-600 data-[state=active]:text-white rounded-lg">
+              <Coins className="w-4 h-4" />
+              自定义
+            </TabsTrigger>
+            <TabsTrigger value="nfts" className="flex items-center gap-2 data-[state=active]:bg-primary-600 data-[state=active]:text-white rounded-lg">
               <Image className="w-4 h-4" />
               NFT
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
+            <TabsTrigger value="history" className="flex items-center gap-2 data-[state=active]:bg-primary-600 data-[state=active]:text-white rounded-lg">
               <History className="w-4 h-4" />
               历史
             </TabsTrigger>
@@ -173,55 +152,58 @@ export function AssetsPage() {
 
           {/* Tokens Tab */}
           <TabsContent value="tokens" className="space-y-3 mt-6">
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-              <span>Chain Balances</span>
-              <span className="text-sm text-gray-400 font-normal">
-                ({balances.length} chains)
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <span>链余额</span>
+              <span className="text-sm text-gray-600 font-normal">
+                ({balances.length} 条链)
               </span>
             </h2>
 
             {balances.map((balance) => {
               return (
-                <Card
+                <div
                   key={balance.chainId}
-                  className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-colors"
+                  className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all"
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <ChainIcon chainId={balance.chainId} size={48} />
-                        <div>
-                          <h3 className="text-lg font-semibold text-white">
-                            {balance.chainName}
-                          </h3>
-                          <p className="text-sm text-gray-400">
-                            Chain ID: {balance.chainId}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="text-right">
-                        {balance.isLoading ? (
-                          <div className="flex items-center gap-2">
-                            <RefreshCw className="w-4 h-4 animate-spin text-gray-400" />
-                            <span className="text-gray-400">Loading...</span>
-                          </div>
-                        ) : balance.error ? (
-                          <span className="text-red-400 text-sm">Error loading</span>
-                        ) : (
-                          <>
-                            <p className="text-2xl font-bold text-white">
-                              {parseFloat(balance.formattedBalance).toFixed(6)}
-                            </p>
-                            <p className="text-sm text-gray-400">{balance.symbol}</p>
-                          </>
-                        )}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <ChainIcon chainId={balance.chainId} size={48} />
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {balance.chainName}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Chain ID: {balance.chainId}
+                        </p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
+
+                    <div className="text-right">
+                      {balance.isLoading ? (
+                        <div className="flex items-center gap-2">
+                          <RefreshCw className="w-4 h-4 animate-spin text-gray-400" />
+                          <span className="text-gray-600">加载中...</span>
+                        </div>
+                      ) : balance.error ? (
+                        <span className="text-red-500 text-sm">加载错误</span>
+                      ) : (
+                        <>
+                          <p className="text-2xl font-bold text-gray-900">
+                            {parseFloat(balance.formattedBalance).toFixed(6)}
+                          </p>
+                          <p className="text-sm text-gray-600">{balance.symbol}</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
               );
             })}
+          </TabsContent>
+
+          {/* Custom Tokens Tab */}
+          <TabsContent value="custom" className="mt-6">
+            <CustomTokenList chainType="ethereum" />
           </TabsContent>
 
           {/* NFTs Tab */}
@@ -236,13 +218,11 @@ export function AssetsPage() {
         </Tabs>
 
         {/* Footer */}
-        <Card className="bg-gray-800/30 border-gray-700">
-          <CardContent className="p-4">
-            <p className="text-center text-sm text-gray-400">
-              💡 Balances are fetched in real-time from each blockchain network
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <p className="text-center text-sm text-blue-700">
+            💡 余额从各区块链网络实时获取
+          </p>
+        </div>
       </div>
     </div>
   );

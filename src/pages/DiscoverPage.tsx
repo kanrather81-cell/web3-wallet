@@ -4,7 +4,10 @@ import { dapps, categories, type DAppCategory } from '../data/dapps';
 import { DAppStorage } from '../services/dappStorage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
-import { ArrowLeft, Compass, ExternalLink, Search, Star, Heart } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { MyDAppsList } from '../components/discover/MyDAppsList';
+import { HistoryList } from '../components/discover/HistoryList';
+import { Compass, ExternalLink, Search, Star, Heart, Clock } from 'lucide-react';
 
 export function DiscoverPage() {
   const navigate = useNavigate();
@@ -51,23 +54,33 @@ export function DiscoverPage() {
   const featuredDapps = dapps.filter((dapp) => dapp.featured);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 pb-24">
       <div className="max-w-7xl mx-auto pt-8 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-3">
-              <Compass className="w-8 h-8 text-indigo-400" />
-              <h1 className="text-3xl font-bold text-white">Discover DApps</h1>
-            </div>
-          </div>
+        <div className="flex items-center gap-3">
+          <Compass className="w-8 h-8 text-indigo-400" />
+          <h1 className="text-3xl font-bold text-white">发现</h1>
         </div>
+
+        {/* Tabs */}
+        <Tabs defaultValue="discover" className="w-full">
+          <TabsList className="w-full sm:w-auto grid grid-cols-3">
+            <TabsTrigger value="discover" className="flex items-center gap-2">
+              <Compass className="w-4 h-4" />
+              发现DApp
+            </TabsTrigger>
+            <TabsTrigger value="favorites" className="flex items-center gap-2">
+              <Heart className="w-4 h-4" />
+              我的DApp
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              历史
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Discover Tab */}
+          <TabsContent value="discover" className="space-y-6 mt-6">
 
         {/* Search */}
         <Card className="bg-gray-800/50 border-gray-700">
@@ -268,14 +281,26 @@ export function DiscoverPage() {
           )}
         </div>
 
-        {/* Info */}
-        <Card className="bg-indigo-500/10 border-indigo-500/30">
-          <CardContent className="p-4">
-            <p className="text-indigo-200 text-sm">
-              💡 Click on any DApp to open it in a new tab. Make sure your wallet is connected to interact with these applications.
-            </p>
-          </CardContent>
-        </Card>
+            {/* Info */}
+            <Card className="bg-indigo-500/10 border-indigo-500/30">
+              <CardContent className="p-4">
+                <p className="text-indigo-200 text-sm">
+                  💡 点击任意 DApp 在浏览器中打开。确保你的钱包已连接以便与这些应用交互。
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* My DApps Tab */}
+          <TabsContent value="favorites" className="space-y-4 mt-6">
+            <MyDAppsList />
+          </TabsContent>
+
+          {/* History Tab */}
+          <TabsContent value="history" className="space-y-4 mt-6">
+            <HistoryList />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
